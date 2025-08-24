@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Topology Analyzer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Network Topology Analyzer</h1>
+                <div class="simulation-status">
+                    <span class="status-indicator" id="simulationStatus">
+                        <span class="status-dot"></span>
+                        Simulation: Stopped
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Navigation Tabs -->
+            <nav class="tab-nav">
+                <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+                <button class="tab-btn" data-tab="topology">Topology</button>
+                <button class="tab-btn" data-tab="configuration">Configuration</button>
+                <button class="tab-btn" data-tab="validation">Validation</button>
+                <button class="tab-btn" data-tab="simulation">Simulation</button>
+                <button class="tab-btn" data-tab="optimization">Optimization</button>
+            </nav>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="dashboard-grid">
+                    <div class="stats-cards">
+                        <div class="stats-card">
+                            <div class="stats-icon">🏢</div>
+                            <div class="stats-info">
+                                <div class="stats-value">3</div>
+                                <div class="stats-label">Total Nodes</div>
+                            </div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon">🔗</div>
+                            <div class="stats-info">
+                                <div class="stats-value">1</div>
+                                <div class="stats-label">Active Links</div>
+                            </div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon">🏷️</div>
+                            <div class="stats-info">
+                                <div class="stats-value">2</div>
+                                <div class="stats-label">VLANs</div>
+                            </div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon">⚠️</div>
+                            <div class="stats-info">
+                                <div class="stats-value">4</div>
+                                <div class="stats-label">Issues Found</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-charts">
+                        <div class="chart-card">
+                            <h3>Network Topology Overview</h3>
+                            <div class="topology-preview">
+                                <img src="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/7c170ba018271e8eef713af34ad69fb9/b647ad80-b9c1-49a2-9427-5040a2b3aa2b/d5ff0fc5.png" alt="Network Topology" />
+                            </div>
+                        </div>
+                        
+                        <div class="chart-card">
+                            <h3>Issues by Severity</h3>
+                            <div class="issues-preview">
+                                <img src="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/7c170ba018271e8eef713af34ad69fb9/d2b934b1-89d4-4d77-b59e-145c2ad80e86/6944d617.png" alt="Issues by Severity" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="health-indicator">
+                        <h3>Network Health</h3>
+                        <div class="health-meter">
+                            <div class="health-bar">
+                                <div class="health-fill" style="width: 75%"></div>
+                            </div>
+                            <span class="health-score">75%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topology Tab -->
+            <div id="topology" class="tab-content">
+                <div class="topology-container">
+                    <div class="topology-controls">
+                        <button class="btn btn--secondary" id="resetView">Reset View</button>
+                        <button class="btn btn--secondary" id="exportTopology">Export Topology</button>
+                    </div>
+                    <div class="network-visualization">
+                        <img src="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/7c170ba018271e8eef713af34ad69fb9/b647ad80-b9c1-49a2-9427-5040a2b3aa2b/d5ff0fc5.png" alt="Interactive Network Topology" class="topology-image" />
+                        <div class="node-overlay" id="nodeOverlay">
+                            <div class="node-details" id="nodeDetails">
+                                <h4 id="nodeTitle">Node Details</h4>
+                                <div id="nodeInfo"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration Tab -->
+            <div id="configuration" class="tab-content">
+                <div class="config-header">
+                    <h2>Device Configurations</h2>
+                    <div class="config-controls">
+                        <input type="text" class="form-control" placeholder="Search devices..." id="configSearch">
+                        <select class="form-control" id="deviceFilter">
+                            <option value="">All Devices</option>
+                            <option value="router">Routers</option>
+                            <option value="switch">Switches</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="config-table-container">
+                    <table class="config-table" id="configTable">
+                        <thead>
+                            <tr>
+                                <th>Device</th>
+                                <th>Type</th>
+                                <th>Hostname</th>
+                                <th>Interfaces</th>
+                                <th>VLANs</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="configTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Validation Tab -->
+            <div id="validation" class="tab-content">
+                <div class="validation-header">
+                    <h2>Network Validation Results</h2>
+                    <div class="validation-controls">
+                        <select class="form-control" id="severityFilter">
+                            <option value="">All Severities</option>
+                            <option value="critical">Critical</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                        <select class="form-control" id="issueTypeFilter">
+                            <option value="">All Types</option>
+                            <option value="missing_ip">Missing IP</option>
+                            <option value="isolated_nodes">Isolated Nodes</option>
+                            <option value="potential_loop">Potential Loop</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="issues-container" id="issuesContainer">
+                </div>
+            </div>
+
+            <!-- Simulation Tab -->
+            <div id="simulation" class="tab-content">
+                <div class="simulation-controls">
+                    <div class="control-group">
+                        <button class="btn btn--primary" id="startSimulation">Start Simulation</button>
+                        <button class="btn btn--secondary" id="stopSimulation" disabled>Stop Simulation</button>
+                        <button class="btn btn--outline" id="injectFault">Inject Fault</button>
+                        <button class="btn btn--outline" id="restoreFault" disabled>Restore Link</button>
+                    </div>
+                </div>
+
+                <div class="simulation-stats">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h4>Simulation Duration</h4>
+                            <span class="stat-value" id="simDuration">0s</span>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Packets Sent</h4>
+                            <span class="stat-value" id="packetsSent">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Packets Received</h4>
+                            <span class="stat-value" id="packetsReceived">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Packet Loss</h4>
+                            <span class="stat-value" id="packetLoss">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="device-stats">
+                    <h3>Device Statistics</h3>
+                    <div class="device-stats-grid" id="deviceStatsGrid">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Optimization Tab -->
+            <div id="optimization" class="tab-content">
+                <div class="optimization-header">
+                    <h2>Network Optimization Recommendations</h2>
+                </div>
+                <div class="recommendations-container" id="recommendationsContainer">
+                </div>
+            </div>
+        </main>
+
+        <!-- Device Details Modal -->
+        <div id="deviceModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Device Details</h3>
+                    <button class="modal-close" id="closeModal">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast hidden">
+            <span id="toastMessage"></span>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay hidden">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+!
+hostname R1
+!
+interface GigabitEthernet0/0
+ description LAN_INTERFACE
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+ mtu 1500
+ bandwidth 1000
+!
+interface GigabitEthernet0/1
+ description WAN_INTERFACE
+ ip address 10.0.0.1 255.255.255.252
+ no shutdown
+ mtu 1500
+ bandwidth 1000
+!
+vlan 10
+ name DATA_VLAN
+ description Data Network
+!
+vlan 20
+ name VOICE_VLAN
+ description Voice Network
+!
+router ospf 1
+ network 192.168.1.0 0.0.0.255 area 0
+ network 10.0.0.0 0.0.0.3 area 0
+!
+ip route 0.0.0.0 0.0.0.0 10.0.0.2
+!
